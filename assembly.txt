@@ -1,0 +1,6 @@
+ADD x5 x6 x7
+BNE x5 x6 12   
+JAL x10 16      
+LW x11 x5 4     
+SW x12 x5 8     
+ADDI x1 x2 4
