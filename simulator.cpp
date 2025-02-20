@@ -62,4 +62,50 @@ private:
         }
         return stoi(str);
     }
+    public:
+    RiscVSimulator() : memory(MEMORY_SIZE, 0) {
+        for (int i = 0; i < NUM_CORES; i++) {
+            cores.emplace_back(i);
+        }
+    }
+
+    // Loads assembly instructions from a file
+    void load_instructions(const string &filename) {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cerr << "Error: Cannot open " << filename << endl;
+            return;
+        }
+
+        string line;
+        while (getline(file, line)) {
+            if (!line.empty()) {
+                instructions.push_back(line);
+            }
+        }
+        cout << "Loaded " << instructions.size() << " instructions from " << filename << "." << endl;
+    }
+
+    // Executes loaded instructions across all cores
+    void execute() {
+        bool cores_active = true;
+
+        while (cores_active) {
+            cores_active = false;
+
+            for (auto &core : cores) {
+                if (core.pc / 4 < instructions.size()) {
+                    cores_active = true;
+                    execute_instruction(core, instructions[core.pc / 4]);
+                }
+            }
+
+            if (!cores_active) {
+                cout << "All cores are idle. Stopping execution." << endl;
+            }
+        }
+    }
+
+    // Decodes and executes a single instruction for a given core
+    void execute_instruction(Core &core, const string &instruction){}
 };
